@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
 import { Component } from 'react';
+import Loader from 'react-loader-spinner';
+import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 
 import photosApi from './photos-api';
 
@@ -13,6 +14,7 @@ class App extends Component {
     searchQuery: '',
     currentPage: 1,
     images: [],
+    isLoading: false,
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -29,6 +31,8 @@ class App extends Component {
     const { searchQuery, currentPage } = this.state;
     const options = { searchQuery, currentPage };
 
+    this.setState({ isLoading: true });
+
     photosApi
       .fetchPhotos(options)
       .then(data => {
@@ -36,19 +40,34 @@ class App extends Component {
           images: [...prevState.images, ...data],
           currentPage: prevState.currentPage + 1,
         }));
+        window.scrollTo({
+          top: document.documentElement.scrollHeight,
+          behavior: 'smooth',
+        });
       })
-      .catch(error => console.log(error));
+      .catch(error => console.log(error))
+      .finally(() => this.setState({ isLoading: false }));
   };
 
   render() {
-    const { images } = this.state;
-    const shouldRenderLoadMoreButton = images.length > 0;
+    const { images, isLoading } = this.state;
+    const shouldRenderLoadMoreButton = images.length > 0 && !isLoading;
 
     return (
       <div className="App">
         <Searchbar onSubmit={this.onChangeQuery} />
         <Container>
           <ImageGallery photos={images} />
+
+          {isLoading && (
+            <Loader
+              type="BallTriangle"
+              color="#00BFFF"
+              height={75}
+              width={75}
+            />
+          )}
+
           {shouldRenderLoadMoreButton && <Button onClick={this.fetchPhotos} />}
         </Container>
       </div>
@@ -57,6 +76,8 @@ class App extends Component {
 }
 
 export default App;
+
+// git commit -m "add Load more btn and spinner"
 
 // const App = () => {
 //   const [searchQuery, setSearchQuery] = useState('');
