@@ -8,6 +8,7 @@ import Container from './components/Container';
 import Searchbar from './components/Searchbar';
 import ImageGallery from './components/ImageGallery';
 import Button from './components/Button';
+import Modal from './components/Modal';
 
 class App extends Component {
   state = {
@@ -15,6 +16,9 @@ class App extends Component {
     currentPage: 1,
     images: [],
     isLoading: false,
+    showModal: false,
+    modalImage: '',
+    modalImageAlt: '',
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -49,15 +53,35 @@ class App extends Component {
       .finally(() => this.setState({ isLoading: false }));
   };
 
+  openModal = e => {
+    if (e.target.nodeName === 'IMG') {
+      this.setState({
+        modalImage: e.target.dataset.src,
+        modalImageAlt: e.target.alt,
+        showModal: true,
+      });
+    }
+  };
+
+  closeModal = e => {
+    if (e.target.dataset.name === 'overlay') {
+      this.setState({
+        modalImage: '',
+        modalImageAlt: '',
+        showModal: false,
+      });
+    }
+  };
+
   render() {
-    const { images, isLoading } = this.state;
+    const { images, isLoading, modalImage, modalImageAlt } = this.state;
     const shouldRenderLoadMoreButton = images.length > 0 && !isLoading;
 
     return (
       <div className="App">
         <Searchbar onSubmit={this.onChangeQuery} />
         <Container>
-          <ImageGallery photos={images} />
+          <ImageGallery photos={images} onClick={this.openModal} />
 
           {isLoading && (
             <Loader
@@ -70,6 +94,13 @@ class App extends Component {
 
           {shouldRenderLoadMoreButton && <Button onClick={this.fetchPhotos} />}
         </Container>
+        {this.state.showModal && (
+          <Modal
+            image={modalImage}
+            alt={modalImageAlt}
+            onClose={this.closeModal}
+          />
+        )}
       </div>
     );
   }
