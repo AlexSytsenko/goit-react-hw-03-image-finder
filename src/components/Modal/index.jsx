@@ -18,7 +18,6 @@ const Modal = ({ image, alt, onClose }) => {
 
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);
-    console.log('повесили слушателя');
 
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
