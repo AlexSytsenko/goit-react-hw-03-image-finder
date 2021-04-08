@@ -1,3 +1,5 @@
+import PropTypes from 'prop-types';
+
 import SearchForm from '../SerachForm';
 import styles from './Searchbar.module.scss';
 
@@ -11,6 +13,10 @@ const Searchbar = ({ onSubmit }) => {
       <SearchForm onSubmit={handleSubmit} />
     </header>
   );
+};
+
+Searchbar.propTypes = {
+  onSubmit: PropTypes.func.isRequired,
 };
 
 export default Searchbar;

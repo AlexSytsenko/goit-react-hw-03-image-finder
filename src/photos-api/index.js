@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-
 const apiKey = '20059079-3862fc9514b48e56c5e47271f';
 const perPage = 12;
 

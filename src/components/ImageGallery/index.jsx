@@ -13,8 +13,8 @@ const ImageGallery = ({ photos, onClick }) => {
   );
 };
 
-// ImageGallery.propTypes = {
-//   children: PropTypes.element,
-// };
+ImageGallery.propTypes = {
+  photos: PropTypes.arrayOf(PropTypes.object).isRequired,
+};
 
 export default ImageGallery;

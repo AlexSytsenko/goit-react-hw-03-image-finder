@@ -3,12 +3,14 @@ import Loader from 'react-loader-spinner';
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 
 import photosApi from './photos-api';
-
 import Container from './components/Container';
 import Searchbar from './components/Searchbar';
 import ImageGallery from './components/ImageGallery';
 import Button from './components/Button';
 import Modal from './components/Modal';
+import Error from './components/Error';
+
+import styles from './styles/App.module.scss';
 
 class App extends Component {
   state = {
@@ -19,6 +21,7 @@ class App extends Component {
     showModal: false,
     modalImage: '',
     modalImageAlt: '',
+    error: null,
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -49,7 +52,7 @@ class App extends Component {
           behavior: 'smooth',
         });
       })
-      .catch(error => console.log(error))
+      .catch(error => this.setState({ error }))
       .finally(() => this.setState({ isLoading: false }));
   };
 
@@ -64,23 +67,22 @@ class App extends Component {
   };
 
   closeModal = e => {
-    if (e.target.dataset.name === 'overlay') {
-      this.setState({
-        modalImage: '',
-        modalImageAlt: '',
-        showModal: false,
-      });
-    }
+    this.setState({
+      modalImage: '',
+      modalImageAlt: '',
+      showModal: false,
+    });
   };
 
   render() {
-    const { images, isLoading, modalImage, modalImageAlt } = this.state;
+    const { images, isLoading, modalImage, modalImageAlt, error } = this.state;
     const shouldRenderLoadMoreButton = images.length > 0 && !isLoading;
 
     return (
-      <div className="App">
+      <div className={styles.App}>
         <Searchbar onSubmit={this.onChangeQuery} />
         <Container>
+          {error && <Error />}
           <ImageGallery photos={images} onClick={this.openModal} />
 
           {isLoading && (
@@ -108,7 +110,7 @@ class App extends Component {
 
 export default App;
 
-// git commit -m "add Load more btn and spinner"
+//Hook
 
 // const App = () => {
 //   const [searchQuery, setSearchQuery] = useState('');
